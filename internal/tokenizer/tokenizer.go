@@ -35,27 +35,42 @@ func (t *Tokenizer) peekChar() rune {
 
 func (t *Tokenizer) Tokenize() ([]Token, error) {
 	var tokens []Token
+	var textBuffer strings.Builder
 
 	for {
 		ch := t.nextChar()
 		if ch == 0 {
+
+			if textBuffer.Len() > 0 {
+				tokens = append(tokens, Token{
+					Type: Text,
+					Data: textBuffer.String(),
+				})
+			}
 			break
 		}
 
 		switch {
 		case ch == '<':
+			if textBuffer.Len() > 0 {
+				tokens = append(tokens, Token{
+					Type: Text,
+					Data: textBuffer.String(),
+				})
+				textBuffer.Reset()
+			}
 			token, err := t.TokenizeTag()
 			if err != nil {
 				return nil, err
 			}
 			tokens = append(tokens, token)
 		case ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r':
-			continue
+			if textBuffer.Len() > 0 {
+				textBuffer.WriteRune(ch)
+			}
 		default:
-			tokens = append(tokens, Token{Type: Text, Data: string(ch)})
-
+			textBuffer.WriteRune(ch)
 		}
-
 	}
 	return tokens, nil
 }
@@ -75,6 +90,9 @@ func (t *Tokenizer) TokenizeTag() (Token, error) {
 	} else if ch == '-' {
 		tagName = Comment
 		return t.TokenizeComment()
+	} else if strings.HasPrefix(string(t.input[t.position-1:]), "<!DOCTYPE") {
+		tagName = Doctype
+		return t.TokenizeDoctype()
 	} else {
 		tagName = StartTag
 	}
@@ -101,10 +119,6 @@ func (t *Tokenizer) TokenizeTag() (Token, error) {
 		}
 
 		if ch == '=' {
-			ch = t.nextChar()
-		}
-
-		for ch == ' ' {
 			ch = t.nextChar()
 		}
 
@@ -169,5 +183,20 @@ func (t *Tokenizer) TokenizeComment() (Token, error) {
 	return Token{
 		Type: Comment,
 		Data: commentText.String(),
+	}, nil
+}
+
+func (t *Tokenizer) TokenizeDoctype() (Token, error) {
+	var doctypeName strings.Builder
+	ch := t.nextChar()
+
+	for ch != '>' {
+		doctypeName.WriteRune(ch)
+		ch = t.nextChar()
+	}
+
+	return Token{
+		Type: Doctype,
+		Data: doctypeName.String(),
 	}, nil
 }
