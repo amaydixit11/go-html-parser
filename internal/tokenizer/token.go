@@ -3,14 +3,12 @@ package tokenizer
 type TokenType string
 
 const (
-	StartTag TokenType = "StartTag"
-	EndTag   TokenType = "EndTag"
-	Text     TokenType = "Text"
-	Comment  TokenType = "Comment"
-	Doctype  TokenType = "Doctype"
-	// Whitespace TokenType = "Whitespace"
-	// SelfClosing TokenType = "SelfClosing"
-	// Error TokenType = "Error"
+	StartTag    TokenType = "StartTag"
+	EndTag      TokenType = "EndTag"
+	Text        TokenType = "Text"
+	Comment     TokenType = "Comment"
+	Doctype     TokenType = "Doctype"
+	SelfClosing TokenType = "SelfClosing"
 )
 
 type Attribute struct {
@@ -20,8 +18,7 @@ type Attribute struct {
 }
 
 type Token struct {
-	Type        TokenType
-	Data        string
-	Attributes  []Attribute
-	SelfClosing bool
+	Type       TokenType
+	Data       string
+	Attributes []Attribute
 }

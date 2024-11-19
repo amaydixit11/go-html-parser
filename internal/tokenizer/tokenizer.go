@@ -1,6 +1,9 @@
 package tokenizer
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 type Tokenizer struct {
 	input    string
@@ -41,7 +44,7 @@ func (t *Tokenizer) Tokenize() ([]Token, error) {
 
 		switch {
 		case ch == '<':
-			token, err := t.tokenizeTag()
+			token, err := t.TokenizeTag()
 			if err != nil {
 				return nil, err
 			}
@@ -58,42 +61,98 @@ func (t *Tokenizer) Tokenize() ([]Token, error) {
 }
 
 func (t *Tokenizer) TokenizeTag() (Token, error) {
-	var token Token
-	var tagName string
+	var tagName TokenType
 	var tagData string
 	var attrs []Attribute
+	var selfClosing bool
 
+	selfClosing = false
 	ch := t.nextChar()
 
 	if ch == '/' {
-		tagName = "EndTag"
-	}
-
-	if ch == '-' {
+		tagName = EndTag
+		ch = t.nextChar()
+	} else if ch == '-' {
+		tagName = Comment
 		return t.TokenizeComment()
+	} else {
+		tagName = StartTag
 	}
 
-	for {
-		if ch == '>' {
-			break
-		}
-
+	for ch != ' ' && ch != '>' && ch != '/' {
+		tagData += string(ch)
 		ch = t.nextChar()
 	}
+
+	for ch == ' ' {
+		ch = t.nextChar()
+	}
+
+	for ch != '>' && ch != '/' {
+		if ch == ' ' {
+			ch = t.nextChar()
+			continue
+		}
+
+		attrName := ""
+		for ch != '=' && ch != ' ' && ch != '>' && ch != '/' {
+			attrName += string(ch)
+			ch = t.nextChar()
+		}
+
+		if ch == '=' {
+			ch = t.nextChar()
+		}
+
+		for ch == ' ' {
+			ch = t.nextChar()
+		}
+
+		attrValue := ""
+		quote := ch
+		if ch == '"' || ch == '\'' {
+			ch = t.nextChar()
+		}
+
+		for ch != quote && ch != '>' && ch != '/' {
+			attrValue += string(ch)
+			ch = t.nextChar()
+		}
+
+		if ch == quote {
+			ch = t.nextChar()
+		}
+
+		attrs = append(attrs, Attribute{
+			Name:  attrName,
+			Value: attrValue,
+			Quote: quote,
+		})
+
+		for ch == ' ' {
+			ch = t.nextChar()
+		}
+	}
+
+	if ch == '/' {
+		selfClosing = true
+		ch = t.nextChar()
+	}
+
+	if ch != '>' {
+		return Token{}, fmt.Errorf("expected '>', got %v", ch)
+	}
+
+	if selfClosing {
+		tagName = SelfClosing
+	}
+
+	return Token{
+		Type:       tagName,
+		Data:       tagData,
+		Attributes: attrs,
+	}, nil
 }
-
-// <!DOCTYPE html>
-// <html>
-// <head>
-// <title>Page Title</title>
-// </head>
-// <body>
-
-// <h1>This is a Heading</h1>
-// <p>This is a paragraph.</p>
-
-// </body>
-// </html>
 
 func (t *Tokenizer) TokenizeComment() (Token, error) {
 	var commentText strings.Builder
