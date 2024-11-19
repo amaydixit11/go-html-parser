@@ -112,37 +112,12 @@ func (t *Tokenizer) TokenizeTag() (Token, error) {
 			continue
 		}
 
-		attrName := ""
-		for ch != '=' && ch != ' ' && ch != '>' && ch != '/' {
-			attrName += string(ch)
-			ch = t.nextChar()
+		attr, err := t.parseAttribute()
+		if err != nil {
+			return Token{}, err
 		}
 
-		if ch == '=' {
-			ch = t.nextChar()
-		}
-
-		attrValue := ""
-		quote := ch
-		if ch == '"' || ch == '\'' {
-			ch = t.nextChar()
-		}
-
-		for ch != quote && ch != '>' && ch != '/' {
-			attrValue += string(ch)
-			ch = t.nextChar()
-		}
-
-		if ch == quote {
-			ch = t.nextChar()
-		}
-
-		attrs = append(attrs, Attribute{
-			Name:  attrName,
-			Value: attrValue,
-			Quote: quote,
-		})
-
+		attrs = append(attrs, attr)
 		for ch == ' ' {
 			ch = t.nextChar()
 		}
@@ -154,7 +129,8 @@ func (t *Tokenizer) TokenizeTag() (Token, error) {
 	}
 
 	if ch != '>' {
-		return Token{}, fmt.Errorf("expected '>', got %v", ch)
+		return Token{}, fmt.Errorf("unexpected character '%v' in tag at position %d", ch, t.position)
+
 	}
 
 	if selfClosing {
@@ -190,13 +166,61 @@ func (t *Tokenizer) TokenizeDoctype() (Token, error) {
 	var doctypeName strings.Builder
 	ch := t.nextChar()
 
-	for ch != '>' {
+	for ch != '>' && ch != 0 {
 		doctypeName.WriteRune(ch)
 		ch = t.nextChar()
+	}
+
+	if ch == 0 {
+		return Token{}, fmt.Errorf("unexpected EOF while parsing DOCTYPE")
 	}
 
 	return Token{
 		Type: Doctype,
 		Data: doctypeName.String(),
+	}, nil
+}
+
+func (t *Tokenizer) parseAttribute() (Attribute, error) {
+	var attrName, attrValue strings.Builder
+	var quote rune
+
+	// Parse attribute name
+	for {
+		ch := t.nextChar()
+		if ch == '=' || ch == ' ' || ch == '>' || ch == '/' || ch == 0 {
+			break
+		}
+		attrName.WriteRune(ch)
+	}
+
+	if t.peekChar() == '=' {
+		t.nextChar() // consume '='
+	}
+
+	// Parse attribute value
+	quote = t.peekChar()
+	if quote == '"' || quote == '\'' {
+		t.nextChar() // consume quote
+	} else {
+		quote = 0 // No quotes
+	}
+
+	for {
+		ch := t.nextChar()
+		if (quote != 0 && ch == quote) || (quote == 0 && (ch == ' ' || ch == '>' || ch == '/' || ch == 0)) {
+			break
+		}
+		attrValue.WriteRune(ch)
+	}
+
+	if quote != 0 && t.peekChar() == quote {
+		t.nextChar() // consume closing quote
+	}
+
+	return Attribute{
+		Name:  attrName.String(),
+		Value: attrValue.String(),
+		Quote: quote,
 	}, nil
 }
