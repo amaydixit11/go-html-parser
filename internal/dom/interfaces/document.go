@@ -31,7 +31,7 @@ type Document interface {
 	CreateTreeWalker(root *Node, whatToShow uint64, filter *NodeFilter) *TreeWalker
 }
 type ElementCreationOptions struct {
-	string is
+	is string
 }
 
 type DOMImplementation interface {
