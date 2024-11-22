@@ -28,8 +28,24 @@ const (
 	DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC DocumentPosition = 0x20
 )
 
-// Node interface represents the Node behaviors in DOM.
-type Node interface {
+// Node interface represents the Node behaviors in DOM
+type Node struct {
+	nodeType        NodeType
+	nodeName        string
+	baseURI         string
+	isConnected     bool
+	ownerDocument   *Document
+	parentNode      *Node
+	parentElement   *Element
+	childNodes      *NodeList
+	firstChild      *Node
+	lastChild       *Node
+	previousSibling *Node
+	nextSibling     *Node
+	nodeValue       string
+	textContent     string
+}
+type NodeInterface interface {
 	GetNodeType() NodeType
 	GetNodeName() string
 	GetBaseURI() string
@@ -39,7 +55,7 @@ type Node interface {
 	GetParentNode() *Node
 	GetParentElement() *Element
 	HasChildNodes() bool
-	GetChildNodes() []Node
+	GetChildNodes() []*Node
 	GetFirstChild() *Node
 	GetLastChild() *Node
 	GetPreviousSibling() *Node
@@ -65,4 +81,14 @@ type Node interface {
 
 type GetRootNodeOptions struct {
 	Composed bool
+}
+
+type NodeList struct {
+	nodes []*Node
+}
+
+type NodeListInterface interface {
+	GetItem(index uint64) *Node
+	GetLength() uint64
+	Iterate() <-chan *Node
 }

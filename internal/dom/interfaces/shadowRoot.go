@@ -15,6 +15,7 @@ const (
 )
 
 type ShadowRoot struct {
+	DocumentFragment
 	Mode           ShadowRootMode
 	DelegatesFocus bool
 	SlotAssignment SlotAssignmentMode

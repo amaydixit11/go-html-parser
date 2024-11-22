@@ -1,6 +1,7 @@
 package dom
 
 type Attr struct {
+	Node
 	namespaceURI string
 	prefix       string
 	localName    string
@@ -11,6 +12,7 @@ type Attr struct {
 }
 
 type AttrInterface interface {
+	NodeInterface
 	GetValue() string
 	SetValue(value string) string
 }

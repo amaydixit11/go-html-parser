@@ -1,6 +1,7 @@
 package dom
 
 type Element struct {
+	Node
 	namespaceURI string
 	prefix       string
 	localName    string
@@ -13,6 +14,7 @@ type Element struct {
 	shadowRoot   ShadowRoot
 }
 type ElementInterface interface {
+	NodeInterface
 	GetNamespaceURI() string
 	GetPrefix() string
 	GetLocalName() string
@@ -28,18 +30,18 @@ type ElementInterface interface {
 	GetAttributes() *NamedNodeMap
 	GetAttributeNames() []string
 	GetAttribute(name string) string
-	// GetAttributeNS(namespace string, localName string) string
+	GetAttributeNS(namespace string, localName string) string
 	SetAttribute(name string, value string)
-	// SetAttributeNS(namespace string, name string, value string)
+	SetAttributeNS(namespace string, name string, value string)
 	RemoveAttribute(name string)
-	// RemoveAttributeNS(namespace string, localName string)
+	RemoveAttributeNS(namespace string, localName string)
 	ToggleAttribute(name string, force bool) bool
 	HasAttribute(name string) bool
-	// HasAttributeNS(namespace string, localName string) bool
+	HasAttributeNS(namespace string, localName string) bool
 	GetAttributeNode(name string) *Attr
-	// GetAttributeNodeNS(namespace string, localName string) *Attr
+	GetAttributeNodeNS(namespace string, localName string) *Attr
 	SetAttributeNode(attr *Attr) *Attr
-	// SetAttributeNodeNS(attr *Attr) *Attr
+	SetAttributeNodeNS(attr *Attr) *Attr
 	RemoveAttributeNode(attr *Attr) *Attr
 	AttachShadow(init *ShadowRoot) *ShadowRoot
 	GetShadowRoot() *ShadowRoot
@@ -47,21 +49,27 @@ type ElementInterface interface {
 	Matches(selectors string) bool
 	WebkitMatchesSelector(selectors string) bool
 	GetElementsByTagName(name string) *HTMLCollection
-	// GetElementsByTagNameNS(namespace string, localName string) *HTMLCollection
+	GetElementsByTagNameNS(namespace string, localName string) *HTMLCollection
 	GetElementsByClassName(classNames string) *HTMLCollection
 	InsertAdjacentElement(where string, element *Element) *Element
 	InsertAdjacentText(where string, data string)
 }
 
-type NamedNodeMap interface {
+type NamedNodeMap struct {
+	length    uint64
+	item      *Attr
+	namedItem *Attr
+}
+
+type NamedNodeMapInterface interface {
 	GetLength() uint64
 	item(index uint64) *Attr
 	getNamedItem(name string) *Attr
-	// getNamedItemNS(namespace string, localName string) *Attr
+	getNamedItemNS(namespace string, localName string) *Attr
 	setNamedItem(attr *Attr) *Attr
-	// setNamedItemNS(attr *Attr) *Attr
+	setNamedItemNS(attr *Attr) *Attr
 	removeNamedItem(name string) *Attr
-	// removeNamedItemNS(namespace string, localName string) *Attr
+	removeNamedItemNS(namespace string, localName string) *Attr
 }
 
 type DOMTokenList interface {

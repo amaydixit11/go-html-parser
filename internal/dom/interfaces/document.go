@@ -1,6 +1,20 @@
 package dom
 
-type Document interface {
+type Document struct {
+	Node
+	implementation  DOMImplementation
+	URL             string
+	documentURI     string
+	compatMode      string
+	characterSet    string
+	charset         string
+	inputEncoding   string
+	contentType     string
+	doctype         DocumentType
+	documentElement *Element
+}
+type DocumentInterface interface {
+	NodeInterface
 	GetImplementation() *DOMImplementation
 	GetURL() string
 	GetDocumentURI() string
@@ -16,7 +30,7 @@ type Document interface {
 	GetElementsByClassName(className string) *HTMLCollection
 	CreateElement(localName string, options *ElementCreationOptions) *Element
 	CreateElementNS(namespace string, qualifiedName string, options *ElementCreationOptions) *Element
-	// CreateDocumentFragment() *DocumentFragment
+	CreateDocumentFragment() *DocumentFragment
 	CreateTextNode(data string) *Text
 	CreateCDATASection(data string) *CDATASection
 	CreateComment(data string) *Comment
@@ -36,18 +50,28 @@ type ElementCreationOptions struct {
 
 type DOMImplementation interface {
 	CreateDocumentType(qualifiedName string, publicId string, systemId string) *DocumentType
-	// CreateDocument(namespace string, qualifiedName string, doctype *DocumentType) *XMLDocument
+	CreateDocument(namespace string, qualifiedName string, doctype *DocumentType) *XMLDocument
 	CreateHTMLDocument(title string) *Document
-	// HasFeature() *DocumentType // Always True
+	HasFeature() *DocumentType // Always True
 }
-type DocumentType interface {
+
+type DocumentType struct {
+	name     string
+	publicId string
+	systemId string
+}
+type DocumentTypeInterface interface {
 	GetName() string
 	GetPublicId() string
 	GetSystemId() string
 }
 
-// type DocumentFragment interface {
-// }
+type DocumentFragment struct {
+	Node
+}
+type DocumentFragmentInterface struct {
+	NodeInterface
+}
 
 type HTMLCollection interface {
 	GetLength() uint64
