@@ -55,44 +55,91 @@ func EventInit(type_ string) Event {
 	}
 }
 
-type EventTarget interface {
-	addEventListener(type_ string, callback *EventListener, options *AddEventListenerOptions)
-	removeEventListener(type_ string, callback *EventListener, options *EventListenerOptions)
-	dispatchEvent(event *Event) bool
+func (e *Event) GetType_() string {
+	return e.type_
 }
 
-type EventListener interface {
-	handleEvent(event *Event)
-}
-type EventListenerOptions struct {
-	capture bool
+func (e *Event) GetTarget() *EventTarget {
+	return e.target
 }
 
-type AddEventListenerOptions struct {
-	EventListenerOptions
-	passive bool
-	once    bool
-	signal  *AbortSignal
+func (e *Event) GetSrcElement() *EventTarget {
+	return e.srcElement
 }
 
-type AbortController struct {
-	signal *AbortSignal
+func (e *Event) GetCurrentTarget() *EventTarget {
+	return e.currentTarget
 }
 
-type AbortControllerInterface interface {
-	Abort(reason any)
+func (e *Event) GetComposedPath() []*EventTarget {
+	return e.ComposedPath
 }
 
-type AbortSignal struct {
-	aborted bool
-	reason  any
-	onabort func(event *Event)
+func (e *Event) GetEventPhase() EventPhaseType {
+	return e.eventPhase
 }
 
-type AbortSignalInterface interface {
-	EventTarget
-	abort(reason any) *AbortSignal
-	timeout(milliseconds uint64) *AbortSignal
-	_any(signals []*AbortSignal) *AbortSignal
-	throwIfAborted()
+func (e *Event) GetBubbles() bool {
+	return e.bubbles
+}
+
+func (e *Event) GetCancelable() bool {
+	return e.cancelable
+}
+
+func (e *Event) GetReturnValue() bool {
+	return e.returnValue
+}
+
+func (e *Event) GetDefaultPrevented() bool {
+	return e.defaultPrevented
+}
+
+func (e *Event) GetComposed() bool {
+	return e.composed
+}
+
+func (e *Event) IsTrusted() bool {
+	return e.isTrusted
+}
+
+func (e *Event) GetTimeStamp() DOMHighResTimeStamp {
+	return e.timeStamp
+}
+
+func (e *Event) SetReturnValue(returnValue bool) bool {
+	e.returnValue = returnValue
+	return e.returnValue
+}
+
+func (e *Event) PreventDefault() {
+	if e.cancelable {
+		e.defaultPrevented = true
+	}
+}
+
+func (e *Event) InitEvent(type_ string, bubbles bool, cancelable bool) {
+	e.type_ = type_
+	e.bubbles = bubbles
+	e.cancelable = cancelable
+	e.composed = false
+	e.timeStamp = DOMHighResTimeStamp(0) // Can set actual timestamp if needed
+	e.isTrusted = false                  // Event created via dispatchEvent, not a user agent event
+}
+
+func (e *Event) GetComposedPath() []*EventTarget {
+	var composedPath []*EventTarget
+	path := e.ComposedPath // You can expand this path according to the specification
+
+	if len(path) == 0 {
+		return composedPath
+	}
+
+	currentTarget := e.GetCurrentTarget()
+	composedPath = append(composedPath, currentTarget)
+
+	// Additional logic for handling closed-tree shadow roots, etc. (omitted for brevity)
+	// This would loop through the path and adjust based on shadow DOM tree status.
+
+	return composedPath
 }

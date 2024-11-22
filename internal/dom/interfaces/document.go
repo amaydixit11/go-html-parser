@@ -54,25 +54,6 @@ type DOMImplementation interface {
 	CreateHTMLDocument(title string) *Document
 	HasFeature() *DocumentType // Always True
 }
-
-type DocumentType struct {
-	name     string
-	publicId string
-	systemId string
-}
-type DocumentTypeInterface interface {
-	GetName() string
-	GetPublicId() string
-	GetSystemId() string
-}
-
-type DocumentFragment struct {
-	Node
-}
-type DocumentFragmentInterface struct {
-	NodeInterface
-}
-
 type HTMLCollection interface {
 	GetLength() uint64
 	GetTtem(index uint64) *Element
