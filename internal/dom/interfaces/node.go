@@ -46,6 +46,7 @@ type Node struct {
 	textContent     string
 }
 type NodeInterface interface {
+	EventTarget
 	GetNodeType() NodeType
 	GetNodeName() string
 	GetBaseURI() string

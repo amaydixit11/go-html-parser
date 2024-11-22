@@ -50,7 +50,7 @@ type ElementCreationOptions struct {
 
 type DOMImplementation interface {
 	CreateDocumentType(qualifiedName string, publicId string, systemId string) *DocumentType
-	CreateDocument(namespace string, qualifiedName string, doctype *DocumentType) *XMLDocument
+	// CreateDocument(namespace string, qualifiedName string, doctype *DocumentType) *XMLDocument
 	CreateHTMLDocument(title string) *Document
 	HasFeature() *DocumentType // Always True
 }

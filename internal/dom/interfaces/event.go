@@ -58,10 +58,12 @@ func EventInit(type_ string) Event {
 type EventTarget interface {
 	addEventListener(type_ string, callback *EventListener, options *AddEventListenerOptions)
 	removeEventListener(type_ string, callback *EventListener, options *EventListenerOptions)
-	dispatchEvent(Event event) bool
-	handleEvent(Event event) callback
+	dispatchEvent(event *Event) bool
 }
 
+type EventListener interface {
+	handleEvent(event *Event)
+}
 type EventListenerOptions struct {
 	capture bool
 }
@@ -71,4 +73,26 @@ type AddEventListenerOptions struct {
 	passive bool
 	once    bool
 	signal  *AbortSignal
+}
+
+type AbortController struct {
+	signal *AbortSignal
+}
+
+type AbortControllerInterface interface {
+	Abort(reason any)
+}
+
+type AbortSignal struct {
+	aborted bool
+	reason  any
+	onabort func(event *Event)
+}
+
+type AbortSignalInterface interface {
+	EventTarget
+	abort(reason any) *AbortSignal
+	timeout(milliseconds uint64) *AbortSignal
+	_any(signals []*AbortSignal) *AbortSignal
+	throwIfAborted()
 }

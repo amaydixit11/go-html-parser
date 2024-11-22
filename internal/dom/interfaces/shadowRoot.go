@@ -22,7 +22,7 @@ type ShadowRoot struct {
 	Clonable       bool
 	Serializable   bool
 	Host           *Element
-	OnSlotChange   *EventHandler
+	OnSlotChange   func(event *Event)
 }
 
 func ShadowRootInit(mode ShadowRootMode) ShadowRoot {
