@@ -1,4 +1,4 @@
-package dom
+package main
 
 type EventListener interface {
 	handleEvent(event *Event)

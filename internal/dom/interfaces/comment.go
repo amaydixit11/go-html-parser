@@ -1,4 +1,4 @@
-package dom
+package main
 
 // Comment
 type Comment struct {

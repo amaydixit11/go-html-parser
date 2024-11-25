@@ -1,4 +1,4 @@
-package dom
+package main
 
 type EventTarget interface {
 	addEventListener(type_ string, callback *EventListener, options *AddEventListenerOptions)

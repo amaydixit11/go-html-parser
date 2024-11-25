@@ -1,4 +1,4 @@
-package dom
+package main
 
 type TreeWalker struct {
 	root        *Node

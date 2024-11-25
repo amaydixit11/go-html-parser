@@ -1,4 +1,4 @@
-package dom
+package main
 
 type NamedNodeMap struct {
 	length    uint64

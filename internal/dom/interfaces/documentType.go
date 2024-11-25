@@ -1,4 +1,4 @@
-package dom
+package main
 
 type DocumentType struct {
 	name     string

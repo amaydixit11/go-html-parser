@@ -1,4 +1,4 @@
-package dom
+package main
 
 type AbortSignal struct {
 	aborted bool

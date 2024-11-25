@@ -1,4 +1,4 @@
-package dom
+package main
 
 type Attr struct {
 	Node

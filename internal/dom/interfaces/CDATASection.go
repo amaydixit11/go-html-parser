@@ -1,4 +1,4 @@
-package dom
+package main
 
 // CDATASection Implementation
 type CDATASection struct {

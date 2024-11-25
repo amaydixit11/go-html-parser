@@ -1,4 +1,4 @@
-package dom
+package main
 
 // Abstract CharacterData implementation
 type CharacterData struct {

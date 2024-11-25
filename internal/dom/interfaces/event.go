@@ -1,4 +1,4 @@
-package dom
+package main
 
 type EventPhaseType uint8
 type DOMHighResTimeStamp float64

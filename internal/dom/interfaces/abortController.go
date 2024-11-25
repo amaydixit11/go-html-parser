@@ -1,4 +1,4 @@
-package dom
+package main
 
 type AbortController struct {
 	signal *AbortSignal

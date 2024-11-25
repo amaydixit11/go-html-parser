@@ -1,4 +1,4 @@
-package dom
+package main
 
 // ProcessingInstruction Implementation
 type ProcessingInstruction struct {

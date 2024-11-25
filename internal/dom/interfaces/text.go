@@ -1,4 +1,4 @@
-package dom
+package main
 
 // Text Implementation
 type Text struct {

@@ -1,4 +1,4 @@
-package dom
+package main
 
 type NodeIterator struct {
 	root                       *Node
