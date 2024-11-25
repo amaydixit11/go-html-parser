@@ -79,9 +79,9 @@ func (t *Tokenizer) TokenizeTag() (Token, error) {
 	var tagName TokenType
 	var tagData string
 	var attrs []Attribute
-	var selfClosing bool
+	var selfClosingTag bool
 
-	selfClosing = false
+	selfClosingTag = false
 	ch := t.nextChar()
 
 	if ch == '/' {
@@ -124,7 +124,7 @@ func (t *Tokenizer) TokenizeTag() (Token, error) {
 	}
 
 	if ch == '/' {
-		selfClosing = true
+		selfClosingTag = true
 		ch = t.nextChar()
 	}
 
@@ -133,8 +133,8 @@ func (t *Tokenizer) TokenizeTag() (Token, error) {
 
 	}
 
-	if selfClosing {
-		tagName = SelfClosing
+	if selfClosingTag {
+		tagName = SelfClosingTag
 	}
 
 	return Token{

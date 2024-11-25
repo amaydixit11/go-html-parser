@@ -71,10 +71,6 @@ func (e *Event) GetCurrentTarget() *EventTarget {
 	return e.currentTarget
 }
 
-func (e *Event) GetComposedPath() []*EventTarget {
-	return e.ComposedPath
-}
-
 func (e *Event) GetEventPhase() EventPhaseType {
 	return e.eventPhase
 }
